@@ -1,11 +1,5 @@
 require "pp"
-
-$ChemicalTemplate = {
-	type: :parent	, #chemical (populate name) or group (populate children)
-	name: "", #1-2 letter abbreviation
-	children: [], #child element
-	subscript: 0,
-}
+require_relative "globals.rb"
 
 def lex_chemical_formula(formulaString)
 	formulaArrayWithNil = formulaString.scan(/([A-Z][a-z]?)([0-9]*)|(\()|(\))([0-9]*)/)
@@ -25,13 +19,13 @@ def find_paren_pair_length(formulaArray, openIndex)
 			parenDepth -= 1
 		end
 		outLength += 1
-		puts "find_paren_pair_length(): formulaArray[openIndex (#{openIndex})]:#{formulaArray[openIndex]} ():#{parenDepth} L:#{outLength}"
+		puts "find_paren_pair_length(): formulaArray[openIndex (#{openIndex})]:#{formulaArray[openIndex]} ():#{parenDepth} L:#{outLength}" if $DEBUG
 	end
 	return outLength
 end
 
 def parse_chemical_formula(formulaArray)
-	puts "parse_chemical_formula(): formulaArray:#{formulaArray}"
+	puts "parse_chemical_formula(): formulaArray:#{formulaArray}" if $DEBUG
 	# array indices (may not be populated):
 	# 0: chemical name
 	# 1: chemical subscript
@@ -65,7 +59,7 @@ def parse_chemical_formula(formulaArray)
 			out[-1][:children] = parse_chemical_formula(formulaArray[index + 1 .. index + 1 + iterationsToSkip])
 			# set the coefficient using the paren length
 			endParenToken = formulaArray[index + 1 + iterationsToSkip]
-			puts "parse_chemical_formula(): iterationsToSkip:#{iterationsToSkip} endParenToken:#{endParenToken}"
+			puts "parse_chemical_formula(): iterationsToSkip:#{iterationsToSkip} endParenToken:#{endParenToken}" if $DEBUG
 			if endParenToken[4].empty?
 				out[-1][:subscript] = 1
 			else
@@ -93,4 +87,19 @@ def chemical_formula_to_string(formula)
 		end
 	end
 	return out
+end
+
+def create_reaction_from_chemicals(reactants, products)
+	reaction = $ReactionTemplate.clone
+	reactants.each do |reactant|
+		molecule = $MoleculeTemplate.clone
+		molecule[:chemical] = reactant
+		reaction[:reactants] << molecule
+	end
+	products.each do |product|
+		molecule = $MoleculeTemplate.clone
+		molecule[:chemical] = product
+		reaction[:products] << molecule
+	end
+	return reaction
 end
