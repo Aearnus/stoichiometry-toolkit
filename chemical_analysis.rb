@@ -1,21 +1,23 @@
 require_relative "globals.rb"
+require_relative "deep_dup.rb"
 
-def flatten_chemical_formula(formula)
-    puts "flatten_chemical_formula(): formula:#{formula}"
+def flatten_chemical_formula(formulaIn)
+    formula = formulaIn.deep_dup
+    #puts "flatten_chemical_formula(): formula:#{formula}"
     out = []
     formula.each do |e|
         if e[:type] == :chemical
-            out << e.clone
+            out.push e.deep_dup
         elsif e[:type] == :parent
             modified_children = e[:children].each do |child|
                 child[:subscript] = child[:subscript] * e[:subscript]
             end
             flatten_chemical_formula(modified_children).each do |e0|
-                out << e0.clone
+                out.push e0.deep_dup
             end
         end
     end
-    puts "flatten_chemical_formula(): out:#{out}"
+    #puts "flatten_chemical_formula(): out:#{out}"
     return out
 end
 
@@ -53,9 +55,59 @@ def get_reaction_sums(reaction)
     return out
 end
 
-def balance_reaction(reaction)
+def are_sums_balanced(sums)
+    if sums[:reactants].sort == sums[:products].sort
+        return true
+    else
+        return false
+    end
+end
+
+def base_10_to_base_n(num, base, arrayLength)
+    outNum = []
+    while num > 0
+        divMod = num.divmod(base)
+        outNum << divMod[1]
+        num = divMod[0]
+    end
+    while outNum.length < arrayLength
+        outNum << 0
+    end
+    return outNum
+end
+
+
+def balance_reaction(reactionIn)
+    reaction = reactionIn.deep_dup
     sums = get_reaction_sums(reaction)
     if sums[:reactants].keys.sort != sums[:products].keys.sort
         raise "Invalid chemical formula -- cannot be balanced"
     end
+    # go through and fill up the coefficients 1 by 1, as if it was a base $MAX_BALANCE_SEARCH_SPACE number
+    digits = reaction[:reactants].length + reaction[:products].length
+    totalSearchSpace = $MAX_BALANCE_SEARCH_SPACE ** (digits)
+    currentSearch = 0
+    loop do
+        currentSearch += 1
+        coefficients = base_10_to_base_n(currentSearch, $MAX_BALANCE_SEARCH_SPACE, digits)
+        print "balance_reaction(): coefficients:" if $DEBUG
+        pp coefficients if $DEBUG
+        reaction[:reactants].each_with_index do |_, i|
+            reaction[:reactants][i][:coefficient] = coefficients[i]
+        end
+        reaction[:products].each_with_index do |_, i|
+            reaction[:products][i][:coefficient] = coefficients[i + reaction[:reactants].length]
+        end
+
+        # success
+        break if are_sums_balanced(get_reaction_sums(reaction))
+
+        # exhaustion
+        if currentSearch > totalSearchSpace
+            raise "Can't balance equation -- search space exhausted. Increase globals.rb/$MAX_BALANCE_SEARCH_SPACE, possibly?"
+        end
+    end
+    print "balance_reaction(): reaction:" if $DEBUG
+    pp reaction if $DEBUG
+    return reaction
 end
