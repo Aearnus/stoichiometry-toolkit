@@ -24,6 +24,39 @@ if __FILE__ == $0
         puts "    #{reaction_to_string(reaction)}"
         puts "Balanced reaction:"
         puts "    #{reaction_to_string(balancedReaction)}"
+        loop do
+            puts "What would you like to do with this reaction?"
+            puts "    Perform a (c)onversion"
+            puts "    Find the (l)imiting reactant"
+            programBranch = gets.chomp
+            programBranch.downcase!
+            if programBranch == "c"
+
+            elsif programBranch == "l"
+                puts "Which product is the desired product?"
+                balancedReaction[:products].each_with_index do |product, i|
+                    puts "(#{i}): #{chemical_formula_to_string(product[:chemical])}"
+                end
+                desiredProductInput = gets.chomp
+                desiredProduct = balancedReaction[:products][desiredProductInput.to_i]
+                reactantMasses = []
+                balancedReaction[:reactants].each_with_index do |reactant, i|
+                    puts "How many grams of #{chemical_formula_to_string(reactant[:chemical])} are in the reaction?"
+                    reactantMasses[i] = gets.chomp.to_f
+                end
+                puts "Stoichiometric charts:"
+                balancedReaction[:reactants].each_with_index do |reactant, i|
+                    puts "\e[4m#{chemical_formula_to_string(reactant[:chemical])}:\e[0m"
+                    puts stoichiometric_chart(
+                                                reactantMasses[i],
+                                                molar_mass(reactant[:chemical]), "g", chemical_formula_to_string(reactant[:chemical]),
+                                                [desiredProduct[:coefficient], reactant[:coefficient]],
+                                                molar_mass(desiredProduct[:chemical]), "g", chemical_formula_to_string(desiredProduct[:chemical])
+                                             )
+                    puts
+                end
+            end
+        end
     elsif programMode == "f"
         puts "Input a chemical formula."
         formula = parse_chemical_formula(lex_chemical_formula(gets.chomp))

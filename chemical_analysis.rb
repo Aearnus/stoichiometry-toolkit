@@ -114,3 +114,31 @@ def balance_reaction(reactionIn)
     pp reaction if $DEBUG
     return reaction
 end
+
+def stoichiometric_chart(given, ratio1, unit1, formula1, ratioArrayCenter, ratio2, unit2, formula2)
+    topLines = []
+    bottomLines = []
+
+    topLines << "#{given} #{unit1} #{formula1}"
+    bottomLines << " " * topLines.last.length
+
+    bottomLines << "#{ratio1} #{unit1}"
+    topLines << "1 mol" + (" " * (bottomLines.last.length - "1 mol".length))
+
+    topLines << "#{ratioArrayCenter[0]} mol #{formula2}"
+    bottomLines << "#{ratioArrayCenter[1]} mol #{formula1}"
+    if topLines.last.length < bottomLines.last.length
+        topLines.last << " " * (bottomLines.last.length - topLines.last.length)
+    else
+        bottomLines.last << " " * (topLines.last.length - bottomLines.last.length)
+    end
+
+    topLines << "#{ratio2} #{unit2}"
+    bottomLines << "1 mol" + (" " * (bottomLines.last.length - "1 mol".length))
+
+    topLine = topLines.join(" | ")
+    bottomLine = bottomLines.join(" | ")
+    middleLine = "-" * topLine.length
+    middleLine << " = #{(given * ratioArrayCenter[0] * ratio2)/(ratio1 * ratioArrayCenter[1]).round(3)} #{unit2} #{formula2}"
+    return "#{topLine}\n#{middleLine}#\n#{bottomLine}"
+end
