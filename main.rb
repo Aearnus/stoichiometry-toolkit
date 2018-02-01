@@ -31,7 +31,7 @@ if __FILE__ == $0
             programBranch = gets.chomp
             programBranch.downcase!
             if programBranch == "c"
-
+                # TODO
             elsif programBranch == "l"
                 puts "Which product is the desired product?"
                 balancedReaction[:products].each_with_index do |product, i|
