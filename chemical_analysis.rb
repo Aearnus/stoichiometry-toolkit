@@ -38,7 +38,7 @@ def get_reaction_sums(reaction)
             if out[:reactants][elementName].nil?
                 out[:reactants][elementName] = 0
             end
-            out[:reactants][elementName] += element[:subscript]
+            out[:reactants][elementName] += element[:subscript] * reactant[:coefficient]
         end
     end
     reaction[:products].each do |product|
@@ -47,7 +47,7 @@ def get_reaction_sums(reaction)
             if out[:products][elementName].nil?
                 out[:products][elementName] = 0
             end
-            out[:products][elementName] += element[:subscript]
+            out[:products][elementName] += element[:subscript] * product[:coefficient]
         end
     end
     print "get_reaction_sums(): output:" if $DEBUG
@@ -90,6 +90,9 @@ def balance_reaction(reactionIn)
     loop do
         currentSearch += 1
         coefficients = base_10_to_base_n(currentSearch, $MAX_BALANCE_SEARCH_SPACE, digits)
+        if coefficients.include? 0
+            next
+        end
         print "balance_reaction(): coefficients:" if $DEBUG
         pp coefficients if $DEBUG
         reaction[:reactants].each_with_index do |_, i|

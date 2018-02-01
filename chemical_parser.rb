@@ -73,6 +73,19 @@ def parse_chemical_formula(formulaArray)
 	return out
 end
 
+def reaction_to_string(reaction)
+	out = ""
+	reactantStrings = []
+	reaction[:reactants].each do |reactant|
+		reactantStrings << "#{reactant[:coefficient] > 1 ? reactant[:coefficient] : ""}#{chemical_formula_to_string(reactant[:chemical])}"
+    end
+	productStrings = []
+    reaction[:products].each do |product|
+		productStrings << "#{product[:coefficient] > 1 ? product[:coefficient] : ""}#{chemical_formula_to_string(product[:chemical])}"
+    end
+	out << reactantStrings.join(" + ") << " → " << productStrings.join(" + ")
+	return out
+end
 def chemical_formula_to_string(formula)
 	out = ""
 	formula.each do |chemical|

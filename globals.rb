@@ -1,4 +1,4 @@
-$DEBUG = true
+$DEBUG = false
 
 $MAX_BALANCE_SEARCH_SPACE = 30
 

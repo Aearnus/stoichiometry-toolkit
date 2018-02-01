@@ -20,6 +20,10 @@ if __FILE__ == $0
         print "main(): reaction:" if $DEBUG
         pp reaction if $DEBUG
         balancedReaction = balance_reaction(reaction)
+        puts "Original reaction:"
+        puts "    #{reaction_to_string(reaction)}"
+        puts "Balanced reaction:"
+        puts "    #{reaction_to_string(balancedReaction)}"
     elsif programMode == "f"
         puts "Input a chemical formula."
         formula = parse_chemical_formula(lex_chemical_formula(gets.chomp))
