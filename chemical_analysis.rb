@@ -139,6 +139,6 @@ def stoichiometric_chart(given, ratio1, unit1, formula1, ratioArrayCenter, ratio
     topLine = topLines.join(" | ")
     bottomLine = bottomLines.join(" | ")
     middleLine = "-" * topLine.length
-    middleLine << " = #{(given * ratioArrayCenter[0] * ratio2)/(ratio1 * ratioArrayCenter[1]).round(3)} #{unit2} #{formula2}"
-    return "#{topLine}\n#{middleLine}#\n#{bottomLine}"
+    middleLine << " = #{(given * ratioArrayCenter[0] * ratio2)/(ratio1 * ratioArrayCenter[1])} #{unit2} #{formula2}"
+    return "#{topLine}\n#{middleLine}\n#{bottomLine}"
 end
