@@ -24,10 +24,24 @@ end
 def molar_mass(formula)
     flat_formula = flatten_chemical_formula(formula)
     mass = 0
+    out = []
     flat_formula.each do |e|
-        mass += $PeriodicTable[e[:name]] * e[:subscript]
+        mass += $PeriodicTable[e[:name]].round(1) * e[:subscript]
+        out << "#{e[:subscript]}(#{$PeriodicTable[e[:name]].round(1)})"
     end
-    return mass
+    return {mass: mass, string: out.join(" + ")}
+end
+
+def get_chemical_sum(chem)
+    out = {}
+    flatten_chemical_formula(chem).each do |element|
+        elementName = element[:name].to_sym
+        if out[elementName].nil?
+            out[elementName] = 0
+        end
+        out[elementName] += element[:subscript]
+    end
+    return out
 end
 
 def get_reaction_sums(reaction)
