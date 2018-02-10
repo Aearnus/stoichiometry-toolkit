@@ -97,27 +97,41 @@ if __FILE__ == $0
                         unitToRatio(wantedUnit, wantedMc[:chemical]), unitToAbbr(wantedUnit), chemical_formula_to_string(wantedMc[:chemical])
                     )
                 elsif programBranch == "l"
-                    puts "Which product is the desired product?"
+                    puts "Which product is the desired product? (or type `n` for none)"
                     balancedReaction[:products].each_with_index do |product, i|
                         puts "(#{i}): #{chemical_formula_to_string(product[:chemical])}"
                     end
-                    desiredProductInput = gets.chomp
-                    desiredProduct = balancedReaction[:products][desiredProductInput.to_i]
+                    desiredProductInput = gets.chomp.downcase
                     reactantMasses = []
                     balancedReaction[:reactants].each_with_index do |reactant, i|
                         puts "How many grams of #{chemical_formula_to_string(reactant[:chemical])} are in the reaction?"
                         reactantMasses[i] = gets.chomp.to_f
                     end
-                    puts "Stoichiometric charts:"
-                    balancedReaction[:reactants].each_with_index do |reactant, i|
-                        puts "\e[4m#{chemical_formula_to_string(reactant[:chemical])}:\e[0m"
-                        puts stoichiometric_chart(
-                                                    reactantMasses[i],
-                                                    molar_mass(reactant[:chemical])[:mass], "g", chemical_formula_to_string(reactant[:chemical]),
-                                                    [desiredProduct[:coefficient], reactant[:coefficient]],
-                                                    molar_mass(desiredProduct[:chemical])[:mass], "g", chemical_formula_to_string(desiredProduct[:chemical])
-                                                 )
-                        puts
+                    if desiredProductInput != "n"
+                        desiredProduct = balancedReaction[:products][desiredProductInput.to_i]
+                        puts "Stoichiometric charts:"
+                        balancedReaction[:reactants].each_with_index do |reactant, i|
+                            puts "\e[4m#{chemical_formula_to_string(reactant[:chemical])}:\e[0m"
+                            puts stoichiometric_chart(
+                                                        reactantMasses[i],
+                                                        molar_mass(reactant[:chemical])[:mass], "g", chemical_formula_to_string(reactant[:chemical]),
+                                                        [desiredProduct[:coefficient], reactant[:coefficient]],
+                                                        molar_mass(desiredProduct[:chemical])[:mass], "g", chemical_formula_to_string(desiredProduct[:chemical])
+                                                     )
+                            puts
+                        end
+                    else
+                        puts "Stoichiometric charts:"
+                        balancedReaction[:reactants].each_with_index do |reactant, i|
+                            puts "\e[4m#{chemical_formula_to_string(reactant[:chemical])}:\e[0m"
+                            puts stoichiometric_chart(
+                                                        reactantMasses[i],
+                                                        molar_mass(reactant[:chemical])[:mass], "g", chemical_formula_to_string(reactant[:chemical]),
+                                                        nil,
+                                                        nil, nil, nil
+                                                     )
+                            puts
+                        end
                     end
                 elsif programBranch == "q"
                     break

@@ -140,20 +140,27 @@ def stoichiometric_chart(given, ratio1, unit1, formula1, ratioArrayCenter, ratio
     bottomLines << "#{ratio1} #{unit1}"
     topLines << "1 mol" + (" " * (bottomLines.last.length - "1 mol".length))
 
-    topLines << "#{ratioArrayCenter[0]} mol #{formula2}"
-    bottomLines << "#{ratioArrayCenter[1]} mol #{formula1}"
-    if topLines.last.length < bottomLines.last.length
-        topLines.last << " " * (bottomLines.last.length - topLines.last.length)
-    else
-        bottomLines.last << " " * (topLines.last.length - bottomLines.last.length)
-    end
+    if !ratioArrayCenter.nil?
+        topLines << "#{ratioArrayCenter[0]} mol #{formula2}"
+        bottomLines << "#{ratioArrayCenter[1]} mol #{formula1}"
+        if topLines.last.length < bottomLines.last.length
+            topLines.last << " " * (bottomLines.last.length - topLines.last.length)
+        else
+            bottomLines.last << " " * (topLines.last.length - bottomLines.last.length)
+        end
 
-    topLines << "#{ratio2} #{unit2}"
-    bottomLines << "1 mol" + (" " * (bottomLines.last.length - "1 mol".length))
+        topLines << "#{ratio2} #{unit2}"
+        bottomLines << "1 mol" + (" " * (bottomLines.last.length - "1 mol".length))
+
+    end
 
     topLine = topLines.join(" | ")
     bottomLine = bottomLines.join(" | ")
     middleLine = "-" * topLine.length
-    middleLine << " = #{(given * ratioArrayCenter[0] * ratio2)/(ratio1 * ratioArrayCenter[1])} #{unit2} #{formula2}"
+    if !ratioArrayCenter.nil?
+        middleLine << " = #{(given * ratioArrayCenter[0] * ratio2)/(ratio1 * ratioArrayCenter[1])} #{unit2} #{formula2}"
+    else
+        middleLine << " = #{given/ratio1} mol #{formula1}"
+    end
     return "#{topLine}\n#{middleLine}\n#{bottomLine}"
 end
