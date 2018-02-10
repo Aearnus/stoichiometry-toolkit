@@ -72,3 +72,9 @@ q
 About
 ---
 Please submit a pull request or an issue if something doesn't work right. I'm a one man team, so I'm not going to be able to get to every issue ASAP. Expect flaws, etc, etc. Message me on https://twitter.com/aearnus or on Discord: @Aearnus#7521 for something urgent.
+
+License
+---
+GNU GPLv3
+
+Provided as-is, with no guarantee for updates and support (unless you pay me :) ).
