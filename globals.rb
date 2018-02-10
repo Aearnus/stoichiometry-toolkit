@@ -1,6 +1,6 @@
 $DEBUG = false
 
-$MAX_BALANCE_SEARCH_SPACE = 30
+$MAX_BALANCE_SEARCH_SPACE = 10
 
 $PeriodicTable = {}
 File.read("periodic_table").split(?\n).each do |line|

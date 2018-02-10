@@ -1,6 +1,22 @@
 require_relative "chemical_parser.rb"
 require_relative "chemical_analysis.rb"
 
+def askForMc(reaction)
+    puts "Reactants:"
+    reaction[:reactants].each_with_index do |product, i|
+        puts "    (#{i}): #{chemical_formula_to_string(product[:chemical])}"
+    end
+    puts "Products:"
+    reaction[:products].each_with_index do |product, i|
+        puts "    (#{i+reaction[:reactants].length}): #{chemical_formula_to_string(product[:chemical])}"
+    end
+    chemIndex = gets.chomp.to_i
+    if chemIndex >= reaction[:reactants].length
+        return reaction[:products][chemIndex - reaction[:reactants].length]
+    else
+        return reaction[:reactants][chemIndex]
+    end
+end
 def askForUnit()
     puts "(l): liters","(mc): molecules","(g): grams"
     unit = gets.chomp.downcase
@@ -19,6 +35,15 @@ def unitToAbbr(unit)
         return "mc"
     elsif unit == :grams
         return "g"
+    end
+end
+def unitToRatio(unit, formula)
+    if unit == :liters
+        return 22.4
+    elsif unit == :molecules
+        return 6.022e23
+    elsif unit == :grams
+        return molar_mass(formula)[:mass]
     end
 end
 
@@ -56,12 +81,21 @@ if __FILE__ == $0
                 if programBranch == "c"
                     puts "What unit are you asking for?"
                     wantedUnit = askForUnit()
+                    puts "Of?"
+                    wantedMc = askForMc(balancedReaction)
+                    puts "What quantity are you given?"
+                    givenQuantity = gets.chomp.to_f
                     puts "What unit are you given?"
                     givenUnit = askForUnit()
-                    #TODO
-                    stoichiometric_chart(, , unitToAbbr(givenUnit), , , unitToAbbr(wantedUnit), )
-                elsif programBranch == "p"
-                    get_chemical_sum
+                    puts "Of?"
+                    givenMc = askForMc(balancedReaction)
+
+                    puts stoichiometric_chart(
+                        givenQuantity,
+                        unitToRatio(givenUnit, givenMc[:chemical]), unitToAbbr(givenUnit), chemical_formula_to_string(givenMc[:chemical]),
+                        [wantedMc[:coefficient], givenMc[:coefficient]],
+                        unitToRatio(wantedUnit, wantedMc[:chemical]), unitToAbbr(wantedUnit), chemical_formula_to_string(wantedMc[:chemical])
+                    )
                 elsif programBranch == "l"
                     puts "Which product is the desired product?"
                     balancedReaction[:products].each_with_index do |product, i|
@@ -79,9 +113,9 @@ if __FILE__ == $0
                         puts "\e[4m#{chemical_formula_to_string(reactant[:chemical])}:\e[0m"
                         puts stoichiometric_chart(
                                                     reactantMasses[i],
-                                                    molar_mass(reactant[:chemical]), "g", chemical_formula_to_string(reactant[:chemical]),
+                                                    molar_mass(reactant[:chemical])[:mass], "g", chemical_formula_to_string(reactant[:chemical]),
                                                     [desiredProduct[:coefficient], reactant[:coefficient]],
-                                                    molar_mass(desiredProduct[:chemical]), "g", chemical_formula_to_string(desiredProduct[:chemical])
+                                                    molar_mass(desiredProduct[:chemical])[:mass], "g", chemical_formula_to_string(desiredProduct[:chemical])
                                                  )
                         puts
                     end

@@ -1,5 +1,6 @@
 require_relative "globals.rb"
 require_relative "deep_dup.rb"
+require "pry"
 
 def flatten_chemical_formula(formulaIn)
     formula = formulaIn.deep_dup
@@ -130,6 +131,7 @@ def balance_reaction(reactionIn)
 end
 
 def stoichiometric_chart(given, ratio1, unit1, formula1, ratioArrayCenter, ratio2, unit2, formula2)
+    #binding.pry
     topLines = []
     bottomLines = []
 
