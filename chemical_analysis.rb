@@ -1,6 +1,5 @@
 require_relative "globals.rb"
 require_relative "deep_dup.rb"
-require "pry"
 
 def flatten_chemical_formula(formulaIn)
     formula = formulaIn.deep_dup
